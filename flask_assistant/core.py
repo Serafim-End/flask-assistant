@@ -350,7 +350,7 @@ class Assistant(object):
             )
 
         # update context_manager's assist reference
-        # TODO: acces context_manager from assist, instead of own object
+        # TODO: access context_manager from assist, instead of own object
         self.context_manager._assist = self
 
         # Get access token from request

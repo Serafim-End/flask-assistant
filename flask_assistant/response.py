@@ -16,7 +16,7 @@ class _Response(object):
             "payload": {
                 "google": {  # TODO: may be depreciated
                     "expect_user_response": True,
-                    "is_ssml": True,
+                    "is_ssml": False,
                     "permissions_request": None,
                 }
             },
@@ -50,16 +50,16 @@ class _Response(object):
                 }
             )
         else:
-            self._messages.append(
-                {
-                    "platform": "ACTIONS_ON_GOOGLE",
-                    "simpleResponses": {
-                        "simpleResponses": [
-                            {"textToSpeech": speech, "displayText": display_text}
-                        ]
-                    },
-                }
-            )
+            self._messages.append({
+                "platform": "ACTIONS_ON_GOOGLE",
+                "simpleResponses": {
+                    "simpleResponses": [{
+                        "textToSpeech": speech,
+                        "displayText": display_text
+                    }]
+                },
+            }
+)
 
     def _include_contexts(self):
         from flask_assistant import core
@@ -124,18 +124,33 @@ class _Response(object):
         link_title=None,
     ):
 
-        card_payload = {"title": title, "subtitle": subtitle, "formattedText": text}
+        card_payload = {
+            "title": title,
+            "subtitle": subtitle,
+            "formattedText": text
+        }
 
         if link and link_title:
-            btn_payload = [{"title": link_title, "openUriAction": {"uri": link}}]
-            card_payload["buttons"] = btn_payload
+            card_payload["buttons"] = [
+                {
+                    "title": link_title,
+                    "openUriAction": {
+                        "uri": link
+                    }
+                }
+            ]
 
         if img_url:
-            img_payload = {"imageUri": img_url, "accessibilityText": img_alt or img_url}
-            card_payload["image"] = img_payload
+            card_payload["image"] = {
+                "imageUri": img_url,
+                "accessibilityText": img_alt or img_url
+            }
 
         self._messages.append(
-            {"platform": "ACTIONS_ON_GOOGLE", "basicCard": card_payload}
+            {
+                "platform": "ACTIONS_ON_GOOGLE",
+                "basicCard": card_payload
+            }
         )
 
         return self
@@ -259,7 +274,12 @@ class _CarouselCard(_ListSelector):
 
     def _add_message(self):
         self._messages.append(
-            {"platform": "ACTIONS_ON_GOOGLE", "carouselSelect": {"items": self._items}}
+            {
+                "platform": "ACTIONS_ON_GOOGLE",
+                "carouselSelect": {
+                    "items": self._items
+                }
+            }
         )
 
 
