@@ -11,7 +11,7 @@ with open("./README.md", "r") as f:
 
 setup(
     name="Flask-Assistant",
-    version="0.3.91",
+    version="0.4.0",
     url="https://github.com/treethought/flask-assistant",
     license="Apache 2.0",
     author="Cam Sweeney",
@@ -19,7 +19,13 @@ setup(
     description="Framework for Building Virtual Assistants with API.AI",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=["flask_assistant", "api_ai"],
+    packages=["flask_assistant", "flask_assistant.response",
+              "flask_assistant.response.dialogflow",
+              "flask_assistant.response.dialogflow.types",
+              "flask_assistant.response.actions_on_google",
+              "flask_assistant.response.base",
+
+              "api_ai"],
     zip_safe=False,
     include_package_data=True,
     platforms="any",

@@ -8,7 +8,8 @@ from flask import current_app, json, request as flask_request, _app_ctx_stack
 from werkzeug.local import LocalProxy
 
 from flask_assistant import logger
-from flask_assistant.response import _Response
+# from flask_assistant.response import _Response
+from flask_assistant.response import _BaseResponseComposite
 from flask_assistant.manager import ContextManager, parse_context_name
 from api_ai.api import ApiAi
 from io import StringIO
@@ -364,7 +365,7 @@ class Assistant(object):
             "Intent": self.intent,
             "Outgoing Contexts": [c.name for c in self.context_manager.active],
             "Matched Action": view_func.__name__,
-            "Response Speech": result._speech,
+            "Response Speech": result.speech,
         }
         msg = "Result: " + json.dumps(summary, indent=2, sort_keys=True)
         logger.info(msg)
@@ -418,9 +419,9 @@ class Assistant(object):
         result = self._map_intent_to_view_func(view_func)()
 
         if result is not None:
-            if isinstance(result, _Response):
-                self._dump_result(view_func, result)
-                resp = result.render_response()
+            if isinstance(result, _BaseResponseComposite):
+                self._dump_result(view_func, result.response_obj)
+                resp = result.response_obj.render_response()
                 return resp
             return result
         logger.error("Action func returned empty response")
