@@ -31,3 +31,4 @@ from flask_assistant.manager import Context
 import flask_assistant.utils
 
 from api_ai.api import ApiAi
+

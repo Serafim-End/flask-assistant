@@ -1,5 +1,5 @@
 
-from typing import Optional
+from typing import Optional, List
 
 from ... import e
 
@@ -11,7 +11,7 @@ class Card(BaseSerializer):
 
     def __init__(self, title: str, subtitle: str,
                  img_url: Optional[str] = None,
-                 buttons: Optional[Button] = None):
+                 buttons: Optional[List[Button]] = None):
 
         self.title = e(title)
         self.subtitle = e(subtitle)
@@ -28,6 +28,10 @@ class Card(BaseSerializer):
             d['imageUri'] = self.img_url
 
         if self.buttons:
-            d['buttons'] = self.buttons.to_dict()
+            d['buttons'] = [b.to_dict() for b in self.buttons]
 
-        return d
+        dd = {
+            'card': d
+        }
+
+        return dd

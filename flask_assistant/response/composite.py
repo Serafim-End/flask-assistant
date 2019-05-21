@@ -3,12 +3,15 @@ from typing import Optional, List
 from flask import current_app
 
 from .actions_on_google import ActionsOnGoogle
+from .facebook import Facebook
 from .response import _Response
 from .base import (TypesInterface, ListInterface)
 from .dialogflow.types import Image, Button
+from . import ACTIONS_ON_GOOGLE, FACEBOOK
 
 INTEGRATIONS = {
-    'ACTIONS_ON_GOOGLE': ActionsOnGoogle
+    ACTIONS_ON_GOOGLE: ActionsOnGoogle,
+    FACEBOOK: Facebook
 }
 
 
@@ -36,27 +39,30 @@ class _ResponseComposite(_BaseResponseComposite, TypesInterface, ListInterface):
 
     def card(self, title: str, subtitle: Optional[str] = None,
              img_url: Optional[str] = None,
-             buttons: Optional[List[Button]] = None) -> '_ResponseComposite':
+             buttons: Optional[List[Button]] = None,
+             **kwargs) -> '_ResponseComposite':
 
         self.objs_integrations = {
-            k: v.card(title, subtitle, img_url, buttons)
+            k: v.card(title, subtitle, img_url, buttons, **kwargs)
             for k, v in self.objs_integrations.items()
         }
 
         return self
 
     def quick_replies(self, replies: List[str],
-                      title: Optional[str] = None) -> '_ResponseComposite':
+                      title: Optional[str] = None,
+                      **kwargs) -> '_ResponseComposite':
+
         self.objs_integrations = {
-            k: v.quick_replies(replies, title)
+            k: v.quick_replies(replies, title, **kwargs)
             for k, v in self.objs_integrations.items()
         }
 
         return self
 
-    def link_out(self, name: str, url: str) -> '_ResponseComposite':
+    def link_out(self, name: str, url: str, **kwargs) -> '_ResponseComposite':
         self.objs_integrations = {
-            k: v.link_out(name, url)
+            k: v.link_out(name, url, **kwargs)
             for k, v in self.objs_integrations.items()
         }
 

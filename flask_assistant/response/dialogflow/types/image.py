@@ -1,8 +1,6 @@
 
 from typing import Optional
 
-from emoji import emojize as _
-
 from .base import BaseSerializer
 
 
@@ -21,6 +19,6 @@ class Image(BaseSerializer):
         }
 
         if self.accessibility_text:
-            d['accessibilityText'] = e(self.accessibility_text),
+            d['accessibilityText'] = self.accessibility_text
 
         return d

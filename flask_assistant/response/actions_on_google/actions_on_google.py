@@ -5,13 +5,15 @@ from .. import e
 
 from flask import json
 
-from flask_assistant.response.dialogflow.types import Button, Card, Image
+from flask_assistant.response.dialogflow.types import Image
+from flask_assistant.response.dialogflow.types import Button as ButtonDF
+from flask_assistant.response.actions_on_google.types import Card, Button
 from flask_assistant.response.base import (
     TypesInterface,
     PermissionInterface, EventInterface, ListInterface
 )
 from flask_assistant.response.response import _Response
-
+from flask_assistant import ACTIONS_ON_GOOGLE
 
 class ActionsOnGoogle(TypesInterface, ListInterface,
                       PermissionInterface, EventInterface):
@@ -35,7 +37,7 @@ class ActionsOnGoogle(TypesInterface, ListInterface,
         self.items = []
 
         self._message_template = {
-            'platform': 'ACTIONS_ON_GOOGLE',
+            'platform': ACTIONS_ON_GOOGLE,
         }
 
         self._integrate_with_actions(
@@ -88,16 +90,30 @@ class ActionsOnGoogle(TypesInterface, ListInterface,
     def card(self, title: str,
              subtitle: Optional[str] = None,
              img_url: Optional[str] = None,
-             buttons: Optional[List[Button]] = None,
+             buttons: Optional[List[ButtonDF]] = None,
              **kwargs) -> 'TypesInterface':
 
         msg = self._message_template.copy()
-        msg.update(Card(title, subtitle, img_url, buttons).to_dict())
+
+        if buttons:
+            buttons = [Button(b.text, b.url) for b in buttons]
+
+        msg.update(
+            Card(
+                title=title,
+                subtitle=subtitle,
+                img_url=img_url,
+                buttons=buttons,
+                **kwargs
+            ).to_dict()
+        )
         self.response_obj.messages.append(msg)
         return self
 
     def quick_replies(self, replies: List[str],
-                      title: Optional[str] = None) -> 'TypesInterface':
+                      title: Optional[str] = None,
+                      **kwargs) -> 'TypesInterface':
+
         msg = self._message_template.copy()
 
         suggestions = {
@@ -112,7 +128,7 @@ class ActionsOnGoogle(TypesInterface, ListInterface,
         self.response_obj.messages.append(msg)
         return self
 
-    def link_out(self, name: str, url: str) -> 'TypesInterface':
+    def link_out(self, name: str, url: str, **kwargs) -> 'TypesInterface':
         msg = self._message_template.copy()
 
         link_out = {

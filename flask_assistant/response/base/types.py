@@ -10,16 +10,17 @@ class TypesInterface(metaclass=abc.ABCMeta):
     def card(self, title: str,
              subtitle: Optional[str] = None,
              img_url: Optional[str] = None,
-             buttons: Optional[Any] = None) -> 'TypesInterface':
+             buttons: Optional[Any] = None, **kwargs) -> 'TypesInterface':
         pass
 
     @abc.abstractmethod
     def quick_replies(self, replies: List[str],
-                      title: Optional[str] = None) -> 'TypesInterface':
+                      title: Optional[str] = None,
+                      **kwargs) -> 'TypesInterface':
         pass
 
     @abc.abstractmethod
-    def link_out(self, name: str, url: str) -> 'TypesInterface':
+    def link_out(self, name: str, url: str, **kwargs) -> 'TypesInterface':
         pass
 
 
@@ -53,10 +54,10 @@ class ListInterface(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def add_item(self, title: str,
-                  key: Optional[str] = None,
-                  synonyms: Optional[List[str]] = None,
-                  description: Optional[str] = None,
-                  image: Optional[Any] = None) -> None:
+                 key: Optional[str] = None,
+                 synonyms: Optional[List[str]] = None,
+                 description: Optional[str] = None,
+                 image: Optional[Any] = None) -> None:
         pass
 
     @abc.abstractmethod
