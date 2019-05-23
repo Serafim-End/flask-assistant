@@ -37,30 +37,21 @@ class Facebook(TypesInterface, ListInterface,
             'platform': 'FACEBOOK'
         }
 
-        # used for our templates, but it supports
-        # types: media, audio, file, text
-        self._payload_template = {
-            'attachment': {
-                'type': 'template',
-                'payload': {}
-            }
-        }
-
         self.ff_payload = {
+            'platform': 'FACEBOOK',
             'payload': {
-                'facebook': {}
+                'facebook': {
+                    'attachment': {
+                        'type': 'template',
+                        'payload': {}
+                    }
+                }
             }
         }
 
         self.__default_text()
-
-    def __custom_payload(self, msg: Any):
-        _msg = self._message_template.copy()
-        _msg['payload'] = {
-            'facebook': msg
-        }
-
-        self.response_obj.messages.append(_msg)
+        self.response_obj.messages.append(self.ff_payload)
+        self.ff_payload = self.response_obj.messages[-1]
 
     def __default_text(self):
         msg = self._message_template.copy()
@@ -84,9 +75,21 @@ class Facebook(TypesInterface, ListInterface,
 
     def quick_replies(self, replies: List[str], title: Optional[str] = None,
                       **kwargs) -> 'TypesInterface':
-        msg = self._message_template.copy()
-        msg.update(QuickReplies(replies, title).to_dict())
-        self.response_obj.messages.append(msg)
+
+        _l = self.ff_payload['payload']['facebook']
+
+        quick_replies = []
+
+        for e in replies:
+            quick_replies.append(
+                {
+                    'content_type': 'text',
+                    'title': e,
+                    'payload': e
+                }
+            )
+
+        _l['quick_replies'] = quick_replies
         return self
 
     def link_out(self, name: str, url: str, **kwargs) -> 'TypesInterface':
@@ -128,19 +131,18 @@ class Facebook(TypesInterface, ListInterface,
         self.items.append(d)
 
     def list(self, buttons: Optional[List[Button]] = None, **kwargs) -> None:
-        msg = self._payload_template.copy()
-        msg['attachment']['payload'] = {
+
+        _l = self.ff_payload['payload']['facebook']['attachment']
+        _l['payload'] = {
             'template_type': 'list',
             'top_element_style': 'compact',
             'elements': self.items
         }
 
         if buttons:
-            msg['attachment']['payload']['buttons'] = [
+            _l['payload']['buttons'] = [
                 b.to_dict for b in buttons
             ]
-
-        self.__custom_payload(msg)
 
     def carousel(self, **kwargs) -> None:
         pass
