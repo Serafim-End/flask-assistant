@@ -11,16 +11,18 @@ class QuickReplies(BaseSerializer):
     def __init__(self, quick_replies: List[str],
                  title: Optional[str] = None):
 
-        self.title = e(title)
+        self.title = title
         self.quick_replies = quick_replies
 
     def to_dict(self) -> dict:
 
         d = {
-            'quickReplies': self.quick_replies
+            'quickReplies': {
+                'quickReplies': self.quick_replies
+            }
         }
 
         if self.title:
-            d['title'] = self.title
+            d['quickReplies']['title'] = e(self.title)
 
         return d

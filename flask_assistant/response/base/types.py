@@ -57,7 +57,8 @@ class ListInterface(metaclass=abc.ABCMeta):
                  key: Optional[str] = None,
                  synonyms: Optional[List[str]] = None,
                  description: Optional[str] = None,
-                 image: Optional[Any] = None) -> None:
+                 image: Optional[Any] = None,
+                 **kwargs) -> None:
         pass
 
     @abc.abstractmethod

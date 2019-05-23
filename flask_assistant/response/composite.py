@@ -7,11 +7,10 @@ from .facebook import Facebook
 from .response import _Response
 from .base import (TypesInterface, ListInterface)
 from .dialogflow.types import Image, Button
-from . import ACTIONS_ON_GOOGLE, FACEBOOK
 
 INTEGRATIONS = {
-    ACTIONS_ON_GOOGLE: ActionsOnGoogle,
-    FACEBOOK: Facebook
+    'ACTIONS_ON_GOOGLE': ActionsOnGoogle,
+    'FACEBOOK': Facebook
 }
 
 
@@ -71,11 +70,12 @@ class _ResponseComposite(_BaseResponseComposite, TypesInterface, ListInterface):
     def add_item(self, title: str, key: Optional[str] = None,
                  synonyms: Optional[List[str]] = None,
                  description: Optional[str] = None,
-                 image: Optional[Image] = None) -> None:
+                 image: Optional[Image] = None,
+                 **kwargs) -> None:
 
         for k, v in self.objs_integrations.items():
             v.add_item(
-                title, key, synonyms, description, image
+                title, key, synonyms, description, image, **kwargs
             )
 
     def list(self, **kwargs) -> None:

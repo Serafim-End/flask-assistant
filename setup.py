@@ -23,6 +23,7 @@ setup(
               "flask_assistant.response.dialogflow",
               "flask_assistant.response.dialogflow.types",
               "flask_assistant.response.facebook",
+              "flask_assistant.response.facebook.types",
               "flask_assistant.response.actions_on_google",
               "flask_assistant.response.actions_on_google.types",
               "flask_assistant.response.base",

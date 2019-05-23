@@ -13,7 +13,7 @@ from flask_assistant.response.base import (
     PermissionInterface, EventInterface, ListInterface
 )
 from flask_assistant.response.response import _Response
-from flask_assistant import ACTIONS_ON_GOOGLE
+
 
 class ActionsOnGoogle(TypesInterface, ListInterface,
                       PermissionInterface, EventInterface):
@@ -37,7 +37,7 @@ class ActionsOnGoogle(TypesInterface, ListInterface,
         self.items = []
 
         self._message_template = {
-            'platform': ACTIONS_ON_GOOGLE,
+            'platform': 'ACTIONS_ON_GOOGLE',
         }
 
         self._integrate_with_actions(
@@ -154,7 +154,8 @@ class ActionsOnGoogle(TypesInterface, ListInterface,
                  key: Optional[str] = None,
                  synonyms: Optional[List[str]] = None,
                  description: Optional[str] = None,
-                 image: Optional[Image] = None) -> None:
+                 image: Optional[Image] = None,
+                 **kwargs) -> None:
 
         d = {
             'info': {
