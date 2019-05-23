@@ -52,7 +52,6 @@ class Facebook(TypesInterface, ListInterface,
             }
         }
 
-        # self.response_obj.response['payload']['facebook'] = {}
         self.__default_text()
 
     def __custom_payload(self, msg: Any):
@@ -105,13 +104,13 @@ class Facebook(TypesInterface, ListInterface,
             'subtitle': e(description),
             'image_url': image.img_url,
 
-            # 'buttons': [
-            #     {
-            #         'type': 'postback',
-            #         'title': title,
-            #         'payload': key
-            #     }
-            # ]
+            'buttons': [
+                {
+                    'type': 'postback',
+                    'title': title,
+                    'payload': key
+                }
+            ]
         }
 
         url = kwargs.get('url')
