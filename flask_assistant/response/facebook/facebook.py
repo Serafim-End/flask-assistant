@@ -40,18 +40,14 @@ class Facebook(TypesInterface, ListInterface,
         self.ff_payload = {
             'platform': 'FACEBOOK',
             'payload': {
-                'facebook': {
-                    'attachment': {
-                        'type': 'template',
-                        'payload': {}
-                    }
-                }
+                'facebook': {}
             }
         }
 
         self.__default_text()
+        # self.ff_payload = self.response_obj.messages[-1]
         self.response_obj.messages.append(self.ff_payload)
-        self.ff_payload = self.response_obj.messages[-1]
+
 
     def __default_text(self):
         msg = self._message_template.copy()
@@ -130,13 +126,17 @@ class Facebook(TypesInterface, ListInterface,
 
         self.items.append(d)
 
-    def list(self, buttons: Optional[List[Button]] = None, **kwargs) -> None:
+    def list(self, buttons: Optional[List[Button]] = None, **kwargs):
 
-        _l = self.ff_payload['payload']['facebook']['attachment']
-        _l['payload'] = {
-            'template_type': 'list',
-            'top_element_style': 'compact',
-            'elements': self.items
+        self.ff_payload['payload']['facebook']['attachment'] = {}
+
+        _l = {
+            'type': 'template',
+            'payload': {
+                'template_type': 'list',
+                'top_element_style': 'compact',
+                'elements': self.items
+            }
         }
 
         if buttons:
@@ -144,8 +144,23 @@ class Facebook(TypesInterface, ListInterface,
                 b.to_dict for b in buttons
             ]
 
-    def carousel(self, **kwargs) -> None:
-        pass
+        self.ff_payload['payload']['facebook']['attachment'] = _l
+        return self
+
+    def carousel(self, **kwargs):
+
+        self.ff_payload['payload']['facebook']['attachment'] = {}
+
+        _l = {
+            'type': 'template',
+            'payload': {
+                'template_type': 'generic',
+                'elements': self.items
+            }
+        }
+
+        self.ff_payload['payload']['facebook']['attachment'] = _l
+        return self
 
     def permission(self, permissions: List[str], context: Optional[str] = None,
                    update_intent: Optional[str] = None) -> None:
