@@ -109,8 +109,8 @@ class event(_BaseResponseComposite):
     def __init__(self, event_name: str, **kwargs):
         super(event, self).__init__(speech='', **kwargs)
 
-        for o in self.objs_integrations:
-            o.event(event_name)
+        for k, v in self.objs_integrations.items():
+            v.event(event_name)
 
 
 class permission(_BaseResponseComposite):
@@ -120,5 +120,5 @@ class permission(_BaseResponseComposite):
                  update_intent: Optional[str] = None):
         super(permission, self).__init__(speech=None)
 
-        for o in self.objs_integrations:
-            o.permission(permissions, context, update_intent)
+        for k, v in self.objs_integrations.items():
+            v.permission(permissions, context, update_intent)

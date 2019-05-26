@@ -1,6 +1,7 @@
 
-from flask import json, make_response
+from typing import Optional
 
+from flask import json, make_response
 from emoji import emojize as _
 
 from flask_assistant import core
@@ -11,9 +12,9 @@ from .. import logger
 class _Response(object):
     """Base webhook response to be returned to Dialogflow"""
 
-    def __init__(self, speech: str):
+    def __init__(self, speech: Optional[str] = None):
 
-        self.speech = _(speech, use_aliases=True)
+        self.speech = _(speech, use_aliases=True) if speech else speech
 
         self.messages = [
             {
