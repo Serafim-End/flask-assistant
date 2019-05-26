@@ -38,7 +38,8 @@ class Facebook(TypesInterface, ListInterface,
             }
         }
 
-        self.__default_text()
+        if self.response_obj.speech:
+            self.__default_text()
         self.response_obj.messages.append(self.ff_payload)
 
     def __default_text(self):

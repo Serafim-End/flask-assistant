@@ -9,14 +9,16 @@ from ...dialogflow.types import Image
 
 class Card:
 
-    def __init__(self, title: str, subtitle: str,
+    def __init__(self, title: str,
+                 subtitle: Optional[str] = None,
                  text: Optional[str] = None,
                  img_url: Optional[str] = None,
                  accessibility_text: Optional[str] = None,
-                 buttons: Optional[List[Button]] = None):
+                 buttons: Optional[List[Button]] = None,
+                 **kwargs):
 
         self.title = e(title)
-        self.subtitle = e(subtitle)
+        self.subtitle = e(subtitle) if subtitle else subtitle
         self.img_url = img_url
         self.accessibility_text = accessibility_text
         self.buttons = buttons
