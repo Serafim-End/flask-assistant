@@ -45,9 +45,7 @@ class Facebook(TypesInterface, ListInterface,
         }
 
         self.__default_text()
-        # self.ff_payload = self.response_obj.messages[-1]
         self.response_obj.messages.append(self.ff_payload)
-
 
     def __default_text(self):
         msg = self._message_template.copy()
@@ -64,12 +62,22 @@ class Facebook(TypesInterface, ListInterface,
              img_url: Optional[str] = None, buttons: Optional[Any] = None,
              **kwargs) -> 'TypesInterface':
 
-        msg = self._message_template.copy()
-        msg.update(Card(title, subtitle, img_url, buttons).to_dict())
-        self.response_obj.messages.append(msg)
+        self.ff_payload['payload']['facebook']['attachment'] = {}
+        self.add_item(
+            title=title,
+            key=title,
+            synonyms=None,
+            description=subtitle,
+            image=Image(img_url=img_url),
+            buttons=buttons,
+            expanded_view=True
+        )
+
+        self.carousel()
         return self
 
-    def quick_replies(self, replies: List[str], title: Optional[str] = None,
+    def quick_replies(self, replies: List[str],
+                      title: Optional[str] = None,
                       **kwargs) -> 'TypesInterface':
 
         _l = self.ff_payload['payload']['facebook']
@@ -89,28 +97,37 @@ class Facebook(TypesInterface, ListInterface,
         return self
 
     def link_out(self, name: str, url: str, **kwargs) -> 'TypesInterface':
-        pass
+        """
+        this method is not implemented by this platform and will be ignored
+        :param name:
+        :param url:
+        :param kwargs:
+        :return:
+        """
+        return self
 
     def add_item(self, title: str, key: Optional[str] = None,
                  synonyms: Optional[List[str]] = None,
                  description: Optional[str] = None,
                  image: Optional[Image] = None,
-                 buttons: Optional[List[Button]] = None,
+                 buttons: Optional[List[ButtonDF]] = None,
+                 expanded_view: Optional[bool] = False,
                  **kwargs) -> None:
 
         d = {
             'title': e(title),
             'subtitle': e(description),
             'image_url': image.img_url,
+        }
 
-            'buttons': [
+        if not expanded_view:
+            d['buttons'] = [
                 {
                     'type': 'postback',
                     'title': title,
                     'payload': key
                 }
             ]
-        }
 
         url = kwargs.get('url')
         if url:
@@ -121,8 +138,17 @@ class Facebook(TypesInterface, ListInterface,
             }
 
         if buttons:
+            if 'buttons' not in d:
+                d['buttons'] = []
+
             for b in buttons:
-                d['buttons'].append(b.to_dict())
+                fb_b = Button(
+                    type='web_url',
+                    title=b.text,
+                    url=b.url
+                )
+
+                d['buttons'].append(fb_b.to_dict())
 
         self.items.append(d)
 

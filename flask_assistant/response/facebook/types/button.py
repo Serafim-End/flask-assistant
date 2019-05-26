@@ -10,14 +10,18 @@ class Button:
         self.title = e(title)
         self.payload = kwargs.get('payload')
 
-        # TODO: more variants of button
-        # self.url = kwargs.get('')
+        self.url = kwargs.get('url')
 
     def to_dict(self) -> dict:
         d = {
             'title': self.title,
-            'payload': self.payload,
             'type': self.type
         }
+
+        if self.payload:
+            d['payload'] = self.payload
+
+        elif self.url:
+            d['url'] = self.url
 
         return d
