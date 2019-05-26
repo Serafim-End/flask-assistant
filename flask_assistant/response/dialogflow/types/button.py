@@ -9,25 +9,18 @@ from .base import BaseSerializer
 class Button(BaseSerializer):
 
     def __init__(self, text: str,
-                 url: Optional[str] = None,
-                 key: Optional[str] = None):
+                 key: Optional[str] = None,
+                 **kwargs):
 
         self.text = e(text)
-        self.url = url
         self.key = key
+        self.url = kwargs.get('url')
+        self.kwargs = kwargs
 
     def to_dict(self) -> dict:
         d = {
-            'title': self.text,
-            'type': 'postback',
-
+            'text': self.text,
+            'postback': self.key,
         }
-
-        if self.url:
-            d['type'] = 'web_url'
-            d['url'] = self.url
-
-        elif self.key:
-            d['payload'] = self.key
 
         return d

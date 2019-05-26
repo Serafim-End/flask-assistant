@@ -146,7 +146,7 @@ class Facebook(TypesInterface, ListInterface,
 
         self.items.append(d)
 
-    def list(self, buttons: Optional[List[Button]] = None, **kwargs):
+    def list(self, buttons: Optional[List[ButtonDF]] = None, **kwargs):
 
         self.ff_payload['payload']['facebook']['attachment'] = {}
 
@@ -160,8 +160,13 @@ class Facebook(TypesInterface, ListInterface,
         }
 
         if buttons:
+
             _l['payload']['buttons'] = [
-                b.to_dict for b in buttons
+                Button(
+                    type='web_url',
+                    title=b.text,
+                    **b.kwargs
+                ).to_dict for b in buttons
             ]
 
         self.ff_payload['payload']['facebook']['attachment'] = _l
