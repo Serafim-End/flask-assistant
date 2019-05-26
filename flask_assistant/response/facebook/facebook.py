@@ -3,11 +3,7 @@ from typing import Optional, List, Any
 
 from .. import e
 
-from flask import json
-
-from flask_assistant.response.dialogflow.types import (
-    Image, QuickReplies, Text, Card
-)
+from flask_assistant.response.dialogflow.types import Image, Text
 
 from flask_assistant.response.dialogflow.types import Button as ButtonDF
 from flask_assistant.response.facebook.types import Button
@@ -21,9 +17,7 @@ from flask_assistant.response.response import _Response
 class Facebook(TypesInterface, ListInterface,
                PermissionInterface, EventInterface):
 
-    def __init__(self, response_obj: _Response,
-                 display_text: Optional[str] = None,
-                 **kwargs):
+    def __init__(self, response_obj: _Response, **kwargs):
         """
         :param response_obj:
         :param kwargs:
