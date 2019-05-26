@@ -91,6 +91,20 @@ class Facebook(TypesInterface, ListInterface,
         _l['quick_replies'] = quick_replies
         return self
 
+    def ask_location(self):
+
+        _l = self.ff_payload['payload']['facebook']
+
+        location = {
+            'content_type': 'location'
+        }
+
+        if 'quick_replies' in _l:
+            _l['quick_replies'].append(location)
+        else:
+            _l['quick_replies'] = {'quick_replies': [location]}
+        return self
+
     def link_out(self, name: str, url: str, **kwargs) -> 'TypesInterface':
         """
         this method is not implemented by this platform and will be ignored
@@ -112,8 +126,10 @@ class Facebook(TypesInterface, ListInterface,
         d = {
             'title': e(title),
             'subtitle': e(description),
-            'image_url': image.img_url,
         }
+
+        if image:
+            d['image_url']: image.img_url
 
         if not expanded_view:
             d['buttons'] = [
