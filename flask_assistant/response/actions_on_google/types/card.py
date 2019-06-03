@@ -34,8 +34,10 @@ class Card:
                     img_url=self.img_url,
                     accessibility_text=self.accessibility_text
                 ).to_dict(),
-                'buttons': [b.to_dict() for b in self.buttons]
             }
         }
+
+        if self.buttons:
+            d['basicCard']['buttons'] = [b.to_dict() for b in self.buttons]
 
         return d
