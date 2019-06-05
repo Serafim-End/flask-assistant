@@ -129,7 +129,7 @@ class Facebook(TypesInterface, ListInterface,
         }
 
         if image:
-            d['image_url']: image.img_url
+            d['image_url'] = image.img_url
 
         if not expanded_view:
             d['buttons'] = [
