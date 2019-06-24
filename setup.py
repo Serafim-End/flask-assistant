@@ -22,6 +22,8 @@ setup(
     packages=["flask_assistant", "flask_assistant.response",
               "flask_assistant.response.dialogflow",
               "flask_assistant.response.dialogflow.types",
+              "flask_assistant.response.telegram",
+              "flask_assistant.response.telegram.types",
               "flask_assistant.response.facebook",
               "flask_assistant.response.facebook.types",
               "flask_assistant.response.actions_on_google",

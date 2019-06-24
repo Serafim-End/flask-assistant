@@ -4,13 +4,15 @@ from flask import current_app
 
 from .actions_on_google import ActionsOnGoogle
 from .facebook import Facebook
+from .telegram import Telegram
 from .response import _Response
 from .base import (TypesInterface, ListInterface)
 from .dialogflow.types import Image, Button
 
 INTEGRATIONS = {
     'ACTIONS_ON_GOOGLE': ActionsOnGoogle,
-    'FACEBOOK': Facebook
+    'FACEBOOK': Facebook,
+    'TELEGRAM': Telegram
 }
 
 

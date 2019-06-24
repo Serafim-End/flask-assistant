@@ -15,7 +15,7 @@ class TypesInterface(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def quick_replies(self, replies: List[str],
-                      title: Optional[str] = None,
+                      title: str,
                       **kwargs) -> 'TypesInterface':
         pass
 
