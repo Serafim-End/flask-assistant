@@ -117,11 +117,11 @@ class Telegram(TypesInterface, ListInterface,
              **kwargs) -> 'TypesInterface':
 
         t = Template(
-            """
-                {{title}}
-                {{subtitle}}
-                [title](img_url)
-            """
+            ""
+            "*{{title}}*"
+            "{{subtitle}}"
+            "[{{title}}]({{img_url}})"
+            ""
         )
 
         _l = self.ff_payload['payload']['telegram']
