@@ -12,6 +12,7 @@ from flask_assistant.response.base import (
     PermissionInterface, EventInterface, ListInterface
 )
 from flask_assistant.response.response import _Response
+from flask_assistant.response.localization import *
 
 from .types import Button
 from .. import e
@@ -21,8 +22,7 @@ class Telegram(TypesInterface, ListInterface,
                PermissionInterface, EventInterface):
 
     HORIZONTAL_KEYBOARD_SPLIT = 2
-    SHARE_LOCATION = 'Поделиться своей геопозицией'
-    SELECT_TEXT = 'Пожалуйста нажмите на кнопку ниже, чтобы выбрать опцию'
+    SHARE_LOCATION = 'Моя геопозиция'
     KEYBOARD_MODE = 'inline_keyboard'
 
     def __init__(self, response_obj: _Response, **kwargs):
@@ -64,7 +64,7 @@ class Telegram(TypesInterface, ListInterface,
                            title: Optional[str] = None,
                            **kwargs) -> TypesInterface:
         _l = self.ff_payload['payload']['telegram']
-        _l['text'] = (title if title else self.SELECT_TEXT)
+        _l['text'] = (title if title else SELECT_TEXT)
 
         chunks_replies = list(
             zip_longest(
@@ -153,7 +153,7 @@ class Telegram(TypesInterface, ListInterface,
                       **kwargs) -> 'TypesInterface':
 
         _l = self.ff_payload['payload']['telegram']
-        _l['text'] = (title if title else self.SELECT_TEXT)
+        _l['text'] = (title if title else SELECT_TEXT)
 
         replies_buttons = [
             Button(title=r, callback_data=r) for r in replies
@@ -168,16 +168,20 @@ class Telegram(TypesInterface, ListInterface,
         temp = deepcopy(self.ff_base_payload)
         _l = temp['payload']['telegram']
 
-        _l['text'] = Template('{{title}}').render(title=title),
+        _l['text'] = Template('{{title}}').render(title=title)
         _l['parse_mode'] = 'Markdown'
+
+        text = (self.SHARE_LOCATION if not button_title
+                         else button_title)
+
         _l['reply_markup'] = {
           'one_time_keyboard': True,
           'resize_keyboard': True,
           'keyboard': [
             [
               {
-                'text': (self.SHARE_LOCATION if not button_title
-                         else button_title),
+                'text': text,
+                'callback_data': text,
                 'request_location': True
               }
             ]
@@ -195,7 +199,7 @@ class Telegram(TypesInterface, ListInterface,
         :return:
         """
         _l = self.ff_payload['payload']['telegram']
-        _l['text'] = self.SELECT_TEXT
+        _l['text'] = SELECT_TEXT
 
         tg_b = [Button(title=name, url=url)]
         _l = self.__keyboard(_l, tg_b)
@@ -212,15 +216,15 @@ class Telegram(TypesInterface, ListInterface,
         t = Template(
             ""
             "*{{title}}* \n"
-            "{{subtitle}} \n"
-            "[{{title}}]({{img_url}})"
+            "{% if subtitle %}{{subtitle}}\n{% endif -%}"
+            "{% if img_url %}[{{title}}]({{img_url}})\n{% endif -%}"
             ""
         )
 
         _l['text'] = t.render(
             title=e(title),
-            subtitle=e(description),
-            img_url=image.img_url
+            subtitle=e(description) if description else None,
+            img_url=image.img_url if image else None
 
         )
         _l['parse_mode'] = 'Markdown'
@@ -251,7 +255,7 @@ class Telegram(TypesInterface, ListInterface,
             self.response_obj.messages.append(e)
 
     def carousel(self, **kwargs) -> None:
-        return self.list(**kwargs)
+        self.list(**kwargs)
 
     def permission(self, permissions: List[str], context: Optional[str] = None,
                    update_intent: Optional[str] = None) -> None:

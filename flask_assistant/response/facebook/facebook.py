@@ -13,6 +13,8 @@ from flask_assistant.response.base import (
 )
 from flask_assistant.response.response import _Response
 
+from flask_assistant.response.localization import *
+
 
 class Facebook(TypesInterface, ListInterface,
                PermissionInterface, EventInterface):
@@ -88,10 +90,21 @@ class Facebook(TypesInterface, ListInterface,
                 }
             )
 
-        _l['quick_replies'] = quick_replies
+        if 'quick_replies' in _l:
+            _l['quick_replies'].extend(quick_replies)
+        else:
+            _l['quick_replies'] = quick_replies
+
+        if title:
+            _l['text'] = title if title else SELECT_TEXT
         return self
 
-    def ask_location(self):
+    def ask_location(self, title: Optional[str] = None):
+        """
+        :param title: Required if there is no any
+        base facebook templates like (card, list)
+        :return:
+        """
 
         _l = self.ff_payload['payload']['facebook']
 
@@ -102,7 +115,10 @@ class Facebook(TypesInterface, ListInterface,
         if 'quick_replies' in _l:
             _l['quick_replies'].append(location)
         else:
-            _l['quick_replies'] = {'quick_replies': [location]}
+            _l['quick_replies'] = [location]
+
+        if title:
+            _l['text'] = title if title else SELECT_TEXT
         return self
 
     def link_out(self, name: str, url: str, **kwargs) -> 'TypesInterface':
@@ -125,8 +141,10 @@ class Facebook(TypesInterface, ListInterface,
 
         d = {
             'title': e(title),
-            'subtitle': e(description),
         }
+
+        if description:
+            d['subtitle'] = e(description),
 
         if image:
             d['image_url'] = image.img_url
@@ -187,7 +205,6 @@ class Facebook(TypesInterface, ListInterface,
             ]
 
         self.ff_payload['payload']['facebook']['attachment'] = _l
-        return self
 
     def carousel(self, **kwargs):
 
@@ -202,7 +219,6 @@ class Facebook(TypesInterface, ListInterface,
         }
 
         self.ff_payload['payload']['facebook']['attachment'] = _l
-        return self
 
     def permission(self, permissions: List[str], context: Optional[str] = None,
                    update_intent: Optional[str] = None) -> None:
