@@ -116,16 +116,22 @@ class Telegram(TypesInterface, ListInterface,
              img_url: Optional[str] = None, buttons: Optional[Any] = None,
              **kwargs) -> 'TypesInterface':
 
+        temp = deepcopy(self.ff_base_payload)
+        _l = temp['payload']['telegram']
+
         t = Template(
             ""
-            "*{{title}}*"
-            "{{subtitle}}"
-            "[{{title}}]({{img_url}})"
+            "*{{title}}*\n"
+            "{% if subtitle %}{{subtitle}}\n{% endif -%}"
+            "{% if text %}{{text}}\n{% endif -%}"
+            "{% if img_url %}[{{title}}]({{img_url}})\n{% endif -%}"
             ""
         )
 
-        _l = self.ff_payload['payload']['telegram']
-        _l['text'] = t.render(title=title, subtitle=title, img_url=img_url)
+        _l['text'] = t.render(
+            title=title, subtitle=subtitle, img_url=img_url,
+            text=kwargs.get('text')
+        )
         _l['parse_mode'] = 'Markdown'
 
         if buttons:
@@ -134,13 +140,13 @@ class Telegram(TypesInterface, ListInterface,
                 Button(
                     title=b.text,
                     callback_data=b.key,
-                    url=b.url,
-                    **b
+                    **b.kwargs
                 ) for b in buttons
             ]
 
             _l = self.__keyboard(_l, tg_b)
 
+        self.response_obj.messages.append(temp)
         return self
 
     def quick_replies(self, replies: List[str], title: Optional[str] = None,
@@ -159,9 +165,11 @@ class Telegram(TypesInterface, ListInterface,
     def ask_location(self, title: str,
                      button_title: Optional[str] = None) -> 'TypesInterface':
 
-        _l = self.ff_payload['payload']['telegram']
+        temp = deepcopy(self.ff_base_payload)
+        _l = temp['payload']['telegram']
 
-        _l['text'] = title if title else '',
+        _l['text'] = Template('{{title}}').render(title=title),
+        _l['parse_mode'] = 'Markdown'
         _l['reply_markup'] = {
           'one_time_keyboard': True,
           'resize_keyboard': True,
@@ -170,13 +178,13 @@ class Telegram(TypesInterface, ListInterface,
               {
                 'text': (self.SHARE_LOCATION if not button_title
                          else button_title),
-                'callback_data': 'location',
                 'request_location': True
               }
             ]
           ]
         }
 
+        self.response_obj.messages.append(temp)
         return self
 
     def link_out(self, name: str, url: str, **kwargs) -> 'TypesInterface':
@@ -198,6 +206,9 @@ class Telegram(TypesInterface, ListInterface,
                  description: Optional[str] = None,
                  image: Optional[Any] = None, **kwargs) -> None:
 
+        temp = deepcopy(self.ff_base_payload)
+        _l = temp['payload']['telegram']
+
         t = Template(
             ""
             "*{{title}}* \n"
@@ -206,8 +217,6 @@ class Telegram(TypesInterface, ListInterface,
             ""
         )
 
-        temp = deepcopy(self.ff_base_payload)
-        _l = temp['payload']['telegram']
         _l['text'] = t.render(
             title=e(title),
             subtitle=e(description),
@@ -225,8 +234,7 @@ class Telegram(TypesInterface, ListInterface,
                     Button(
                         title=b.text,
                         callback_data=b.key,
-                        url=b.url,
-                        **b
+                        **b.kwargs
                     )
                 )
 

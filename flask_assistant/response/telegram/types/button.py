@@ -23,6 +23,6 @@ class Button:
             d['url'] = self.url
 
         if self.request_location:
-            d['request_location'] = True
+            d['request_location'] = self.request_location
 
         return d
