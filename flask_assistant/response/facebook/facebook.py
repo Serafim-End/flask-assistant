@@ -144,7 +144,7 @@ class Facebook(TypesInterface, ListInterface,
         }
 
         if description:
-            d['subtitle'] = e(description),
+            d['subtitle'] = e(description)
 
         if image:
             d['image_url'] = image.img_url
